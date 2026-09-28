@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual del Alumno - Infraestructura Web y Ciberseguridad Edge | CESBA 2026</title>
+    
+    <!-- Fuentes y dependencias -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        navy: { 950: '#060913', 900: '#0a0f1d', 800: '#0f172a', 700: '#1e293b', 600: '#334155' },
+                        purple: { 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed' },
+                        emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+                        orange: { 400: '#fb923c', 500: '#f97316' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #0a0f1d; color: #f8fafc; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .code-block {
+            background: #060913;
+            border: 1px solid #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .copy-btn:hover { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+        
+        /* Custom Checkbox */
+        .step-check:checked + div {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        .step-check:checked + div .check-title {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        @media print {
+            body { background-color: #0a0f1d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- Barra de Progreso Superior -->
+    <div class="fixed top-0 left-0 w-full h-1 bg-navy-800 z-50 no-print">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-purple-500 to-emerald-500 transition-all duration-300 w-0"></div>
+    </div>
+
+    <!-- Header Sticky -->
+    <header class="sticky top-0 glass-panel border-b border-navy-700 z-40 px-4 md:px-8 py-3.5 no-print">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-navy-900 flex items-center justify-center border border-purple-500/30 shadow-md">
+                    <i class="fa-solid fa-book-open-reader text-sm text-white"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold tracking-wider text-purple-400 uppercase block">Jornada Tecnológica 2026</span>
+                    <h1 class="text-sm font-bold text-gray-100 hidden sm:block">Manual Práctico: Infraestructura Web y Ciberseguridad Edge</h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 bg-navy-900 border border-navy-700 px-3 py-1.5 rounded-lg text-xs">
+                    <span class="text-gray-400">Tu avance:</span>
+                    <span id="progress-text" class="font-mono font-bold text-emerald-400">0/10</span>
+                </div>
+                <button onclick="window.print()" class="bg-navy-800 hover:bg-navy-700 text-gray-200 border border-navy-600 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-purple-400"></i>
+                    <span class="hidden sm:inline">Guardar PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden border-b border-navy-700 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-navy-800 via-navy-900 to-navy-950 py-12 md:py-16 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="inline-block px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-semibold tracking-widest uppercase mb-4">
+                Guía Paso a Paso para Asistentes
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+                Infraestructura Web y <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">Ciberseguridad</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto mb-8">
+                De Cero a Producción Edge (Serverless): Aprende a desplegar sitios globales con integración continua (CI/CD), protegerlos con un Firewall de Aplicaciones Web (WAF) y conectar una base de datos distribuida sin servidores.
+            </p>
+
+            <!-- Tarjeta del Instructor -->
+            <div class="inline-flex flex-col sm:flex-row items-center gap-4 glass-panel px-6 py-4 rounded-2xl border border-navy-700 text-left">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-navy-900 border border-purple-400 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-chalkboard-user text-white"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Material elaborado por el Instructor</p>
+                    <p class="text-base font-bold text-white">Mtro. César Gabriel Terrazas Zarazúa</p>
+                    <p class="text-xs text-purple-400">Ingeniería en Sistemas Computacionales — CESBA</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenido Principal con Barra Lateral -->
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Índice de Navegación (Sidebar en Desktop) -->
+        <aside class="lg:col-span-3 no-print">
+            <div class="sticky top-20 glass-panel rounded-2xl p-5 border border-navy-700">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-ul text-purple-400"></i> Contenido del Taller
+                </h3>
+                <nav class="space-y-1.5 text-sm">
+                    <a href="#requisitos" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <i class="fa-solid fa-circle-check text-xs text-emerald-400"></i> 0. Requisitos Previos
+                    </a>
+                    <a href="#paso-1" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <span class="w-5 h-5 rounded bg-navy-800 text-purple-400 text-xs flex items-center justify-center font-mono font-bold">1</span> Identidad y Edge
+                    </a>
+                    <a href="#paso-2" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <span class="w-5 h-5 rounded bg-navy-800 text-purple-400 text-xs flex items-center justify-center font-mono font-bold">2</span> Código en GitHub
+                    </a>
+                    <a href="#paso-3" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <span class="w-5 h-5 rounded bg-navy-800 text-orange-400 text-xs flex items-center justify-center font-mono font-bold">3</span> Cloudflare Pages (CI/CD)
+                    </a>
+                    <a href="#paso-4" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <span class="w-5 h-5 rounded bg-navy-800 text-emerald-400 text-xs flex items-center justify-center font-mono font-bold">4</span> Seguridad y WAF
+                    </a>
+                    <a href="#paso-5" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <span class="w-5 h-5 rounded bg-navy-800 text-blue-400 text-xs flex items-center justify-center font-mono font-bold">5</span> Serverless Workers + KV
+                    </a>
+                    <a href="#glosario" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-gray-300 hover:bg-navy-800 hover:text-white transition">
+                        <i class="fa-solid fa-graduation-cap text-xs text-purple-400"></i> Glosario de Bolsillo
+                    </a>
+                </nav>
+
+                <hr class="border-navy-700 my-4">
+                <button onclick="resetProgress()" class="w-full text-xs text-gray-500 hover:text-gray-300 py-1 transition text-center">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Reiniciar casillas de avance
+                </button>
+            </div>
+        </aside>
+
+        <!-- Columna de Pasos -->
+        <main class="lg:col-span-9 space-y-12">
+
+            <!-- SECCIÓN 0: REQUISITOS PREVIOS -->
+            <section id="requisitos" class="glass-panel rounded-2xl p-6 md:p-8 border border-navy-700">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <i class="fa-solid fa-toolbox"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-white">0. Requisitos Previos</h2>
+                        <p class="text-xs md:text-sm text-gray-400">Lo único que necesitas antes de comenzar (100% gratuito, sin tarjeta de crédito)</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-navy-900/80 p-4 rounded-xl border border-navy-700">
+                        <h4 class="font-bold text-sm text-white mb-1"><i class="fa-solid fa-envelope text-purple-400 mr-2"></i>1. Correo Personal</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Tener acceso abierto a tu bandeja de entrada para recibir los enlaces de verificación de cuenta.</p>
+                    </div>
+                    <div class="bg-navy-900/80 p-4 rounded-xl border border-navy-700">
+                        <h4 class="font-bold text-sm text-white mb-1"><i class="fa-brands fa-github text-gray-200 mr-2"></i>2. Cuenta en GitHub</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Regístrate gratis en <a href="https://github.com" target="_blank" class="text-purple-400 underline">github.com</a>. Será la bóveda en la nube para tu código fuente.</p>
+                    </div>
+                    <div class="bg-navy-900/80 p-4 rounded-xl border border-navy-700">
+                        <h4 class="font-bold text-sm text-white mb-1"><i class="fa-solid fa-cloud text-orange-400 mr-2"></i>3. Cuenta en Cloudflare</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed">Regístrate gratis en <a href="https://dash.cloudflare.com/sign-up" target="_blank" class="text-orange-400 underline">dash.cloudflare.com</a> y verifica tu correo electrónico.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 1: IDENTIDAD EN LA WEB -->
+            <section id="paso-1" class="glass-panel rounded-2xl p-6 md:p-8 border border-navy-700 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span class="text-xs font-mono uppercase tracking-wider text-purple-400 font-semibold">Fase 01 • Arquitectura</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Identidad en la Web y Red Edge</h2>
+                    </div>
+                    <span class="text-4xl font-black text-navy-700 select-none">01</span>
+                </div>
+
+                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                    En la arquitectura web tradicional, publicar un sitio requería alquilar un servidor centralizado (VPS o Hosting compartido), comprar un dominio (<code>.com</code>) y configurar manualmente registros DNS y certificados SSL, lo cual tomaba horas en propagarse. Hoy utilizaremos **Infraestructura Edge (en el borde)**.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-navy-900/60 p-5 rounded-xl border border-navy-700">
+                        <h3 class="font-bold text-red-400 text-sm mb-2"><i class="fa-solid fa-server mr-2"></i>Hosting Tradicional</h3>
+                        <ul class="text-xs text-gray-400 space-y-2">
+                            <li>• Un solo servidor físico (ej. en Dallas). Si se cae, tu web muere.</li>
+                            <li>• Requiere tarjeta de crédito desde el día 1.</li>
+                            <li>• Vulnerable a ataques de denegación de servicio (DDoS) directos a la IP.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-navy-900/90 p-5 rounded-xl border border-emerald-500/40">
+                        <h3 class="font-bold text-emerald-400 text-sm mb-2"><i class="fa-solid fa-bolt mr-2"></i>Arquitectura Edge (Cloudflare Pages)</h3>
+                        <ul class="text-xs text-gray-300 space-y-2">
+                            <li>• Tu web se replica en <strong>más de 300 centros de datos</strong> en todo el mundo (incluido Querétaro y CDMX).</li>
+                            <li>• Subdominio profesional gratuito: <code class="text-purple-400">*.pages.dev</code></li>
+                            <li>• Certificado SSL/TLS (HTTPS) automático e instantáneo.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4 text-xs md:text-sm text-purple-200 flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info text-purple-400 text-lg mt-0.5"></i>
+                    <div>
+                        <strong>Nota importante para esta práctica:</strong> No ingreses ninguna tarjeta de crédito ni compres un dominio hoy. Todo el flujo que construiremos opera en la capa gratuita empresarial de GitHub y Cloudflare.
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 2: GITHUB -->
+            <section id="paso-2" class="glass-panel rounded-2xl p-6 md:p-8 border border-navy-700">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span class="text-xs font-mono uppercase tracking-wider text-purple-400 font-semibold">Fase 02 • Control de Versiones</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Subiendo el Código a la Nube (GitHub)</h2>
+                    </div>
+                    <span class="text-4xl font-black text-navy-700 select-none">02</span>
+                </div>
+
+                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                    En entornos profesionales, el código nunca se sube por FTP ni se transporta en memorias USB. Se aloja en un repositorio **Git**, lo que permite que cada cambio quede registrado y se despliegue automáticamente.
+                </p>
+
+                <!-- Instrucciones numeradas -->
+                <div class="space-y-4 mb-6">
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Crear un nuevo repositorio</h4>
+                            <p class="text-gray-400 text-xs mt-1">Inicia sesión en GitHub, haz clic en el botón <strong>+</strong> (arriba a la derecha) y selecciona <strong>New repository</strong>. En <em>Repository name</em> escribe exactamente: <code class="bg-navy-800 text-purple-400 px-1.5 py-0.5 rounded">taller-seguridad</code></p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Visibilidad Pública y Creación</h4>
+                            <p class="text-gray-400 text-xs mt-1">Asegúrate de que esté marcada la opción <strong>Public</strong>. Baja hasta el final y haz clic en el botón verde <strong>Create repository</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Crear el archivo principal <code class="text-emerald-400">index.html</code></h4>
+                            <p class="text-gray-400 text-xs mt-1">En la pantalla que aparece, busca el enlace azul que dice <strong>creating a new file</strong> (o el botón <em>Add file -> Create new file</em>). En la caja de nombre del archivo escribe <code class="bg-navy-800 text-emerald-400 px-1.5 py-0.5 rounded">index.html</code> (en minúsculas, todo junto).</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Pegar el código y hacer Commit</h4>
+                            <p class="text-gray-400 text-xs mt-1">Copia el siguiente bloque de código HTML, pégalo en el editor grande de GitHub y presiona el botón verde <strong>Commit changes...</strong> (arriba a la derecha) dos veces para confirmar.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Código HTML Inicial -->
+                <div class="code-block mb-6">
+                    <button class="copy-btn" onclick="copyCode('code-html-1', this)"><i class="fa-regular fa-copy mr-1"></i> Copiar código</button>
+                    <div class="text-xs text-gray-500 mb-2 font-mono">// Archivo: index.html (Versión Inicial)</div>
+<pre id="code-html-1"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Mi Web Segura - CESBA&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: sans-serif; background: #0f172a; color: white; text-align: center; padding-top: 10%; margin: 0; }
+        h1 { color: #10b981; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .container { border: 1px solid #334155; padding: 2.5rem; border-radius: 1rem; display: inline-block; background: #1e293b; max-width: 450px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;¡Misión Cumplida! 🚀&lt;/h1&gt;
+        &lt;p&gt;Infraestructura Edge desplegada exitosamente.&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+
+                <!-- Alerta de Errores Comunes -->
+                <div class="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 mb-6">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-orange-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Cuidado con estos 3 errores frecuentes:
+                    </h4>
+                    <ul class="text-xs text-orange-200 space-y-1.5">
+                        <li><strong>1. Olvidar la extensión:</strong> Si nombras el archivo solo <code>index</code> en lugar de <code>index.html</code>, el navegador mostrará texto plano en vez de tu página web.</li>
+                        <li><strong>2. Llamarlo diferente:</strong> Los servidores web buscan por defecto un archivo llamado exactamente <code>index.html</code> como portada.</li>
+                        <li><strong>3. No confirmar el Commit:</strong> Al dar clic en <em>Commit changes...</em> se abre una ventana emergente; debes volver a dar clic en el botón verde de esa ventana para que se guarde.</li>
+                    </ul>
+                </div>
+
+                <!-- Checkboxes de Progreso -->
+                <div class="space-y-2 border-t border-navy-700 pt-4">
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Creé mi repositorio público <code>taller-seguridad</code> en GitHub.</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Guardé (hice Commit) de mi archivo <code>index.html</code>.</span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- PASO 3: CLOUDFLARE PAGES (CI/CD) -->
+            <section id="paso-3" class="glass-panel rounded-2xl p-6 md:p-8 border border-navy-700">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span class="text-xs font-mono uppercase tracking-wider text-orange-400 font-semibold">Fase 03 • Despliegue Continuo (CI/CD)</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Conectando GitHub a Cloudflare Pages</h2>
+                    </div>
+                    <span class="text-4xl font-black text-navy-700 select-none">03</span>
+                </div>
+
+                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                    Ahora crearemos un **Pipeline CI/CD (Integración y Entrega Continua)**. Conectaremos Cloudflare con tu GitHub para que cada vez que modifiques tu código en GitHub, Cloudflare lo detecte y actualice tu página en todo el mundo en segundos.
+                </p>
+
+                <div class="space-y-4 mb-6">
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-orange-500 text-navy-950 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Ir a Workers & Pages</h4>
+                            <p class="text-gray-400 text-xs mt-1">Entra a tu panel en <a href="https://dash.cloudflare.com" target="_blank" class="text-orange-400 underline">dash.cloudflare.com</a>. En el menú lateral izquierdo, haz clic en <strong>Compute (Workers)</strong> o <strong>Workers & Pages</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-orange-500 text-navy-950 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Seleccionar la pestaña "Pages"</h4>
+                            <p class="text-gray-400 text-xs mt-1">Si das clic en el botón azul <strong>Create</strong>, asegúrate de cambiar a la pestaña <strong>Pages</strong> arriba y elegir la opción <strong>Connect to Git</strong> (Import an existing Git repository).</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-orange-500 text-navy-950 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Autorizar y elegir el repositorio</h4>
+                            <p class="text-gray-400 text-xs mt-1">Conecta tu cuenta de GitHub, selecciona la opción <em>All repositories</em> para evitar bloqueos de permisos, elige tu repositorio <code class="text-purple-400">taller-seguridad</code> y haz clic en <strong>Begin setup</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <span class="w-7 h-7 rounded-full bg-orange-500 text-navy-950 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+                        <div class="text-sm">
+                            <h4 class="font-bold text-white">Guardar y Desplegar (Save and Deploy)</h4>
+                            <p class="text-gray-400 text-xs mt-1">Deja las opciones de compilación en blanco (ya que es HTML puro) y haz clic en <strong>Save and Deploy</strong>. Espera ~30 segundos y Cloudflare te dará tu enlace público terminado en <code class="text-emerald-400">.pages.dev</code>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checkboxes de Progreso -->
+                <div class="space-y-2 border-t border-navy-700 pt-4">
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Conecté GitHub con Cloudflare Pages exitosamente.</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Abrí mi enlace público <code>https://taller-seguridad-xxx.pages.dev</code> y vi mi página en vivo.</span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- PASO 4: SEGURIDAD WAF -->
+            <section id="paso-4" class="glass-panel rounded-2xl p-6 md:p-8 border border-navy-700">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">Fase 04 • Ciberseguridad Perimetral</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Hardening y Firewall de Aplicaciones Web (WAF)</h2>
+                    </div>
+                    <span class="text-4xl font-black text-navy-700 select-none">04</span>
+                </div>
+
+                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                    Un sitio en internet recibe escaneos de bots automatizados a los pocos minutos de nacer. Vamos a verificar su cifrado en tránsito y cómo configurar reglas de **WAF (Web Application Firewall)** en Capa 7 para filtrar tráfico malicioso antes de que toque nuestro servidor.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-navy-900/70 p-4 rounded-xl border-l-4 border-l-emerald-500 border border-navy-700">
+                        <h4 class="font-bold text-sm text-white mb-1"><i class="fa-solid fa-lock text-emerald-400 mr-1.5"></i>1. Verificación SSL/TLS</h4>
+                        <p class="text-xs text-gray-400">Haz clic en el icono de ajustes/candado junto a tu URL <code>.pages.dev</code> en el navegador. Notarás que tiene un certificado TLS válido emitido automáticamente.</p>
+                    </div>
+                    <div class="bg-navy-900/70 p-4 rounded-xl border-l-4 border-l-purple-500 border border-navy-700">
+                        <h4 class="font-bold text-sm text-white mb-1"><i class="fa-solid fa-filter text-purple-400 mr-1.5"></i>2. Regla Geográfica WAF</h4>
+                        <p class="text-xs text-gray-400">En dominios administrados en Cloudflare (<strong>Security -> WAF -> Custom rules</strong>), creamos una condición: <code>If Country does not equal Mexico</code>.</p>
+                    </div>
+                    <div class="bg-navy-900/70 p-4 rounded-xl border-l-4 border-l-orange-500 border border-navy-700">
+                        <h4 class="font-bold text-sm text-white mb-1"><i class="fa-solid fa-shield-halved text-orange-400 mr-1.5"></i>3. Managed Challenge</h4>
+                        <p class="text-xs text-gray-400">En vez de bloquear a ciegas, aplicamos <strong>Managed Challenge</strong>: obliga al navegador sospechoso a resolver un reto criptográfico en JavaScript que frena bots y DDoS.</p>
+                    </div>
+                </div>
+
+                <!-- Checkboxes de Progreso -->
+                <div class="space-y-2 border-t border-navy-700 pt-4">
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Comprendí cómo funciona el candado SSL/TLS y las reglas de mitigación WAF (Managed Challenge).</span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- PASO 5: SERVERLESS WORKERS + KV -->
+            <section id="paso-5" class="glass-panel rounded-2xl p-6 md:p-8 border-2 border-purple-500/40 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span class="text-xs font-mono uppercase tracking-wider text-blue-400 font-semibold">Fase 05 • Backend Serverless + Base de Datos</span>
+                        <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Cómputo Edge: Cloudflare Workers + KV</h2>
+                    </div>
+                    <span class="text-4xl font-black text-navy-700 select-none">05</span>
+                </div>
+
+                <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                    Una página HTML estática por sí sola no puede guardar datos. En lugar de levantar un servidor tradicional con PHP, Node.js y MySQL, crearemos una función **Serverless (Cloudflare Worker)** conectada a un almacén de datos ultrarrápido **Key-Value (KV)** en el borde.
+                </p>
+
+                <!-- Subpaso 5.1: Crear KV -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500 text-xs flex items-center justify-center">A</span>
+                        Crear la Base de Datos Key-Value (KV)
+                    </h3>
+                    <ol class="list-decimal list-inside text-xs md:text-sm text-gray-300 space-y-2 bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <li>En el menú izquierdo de Cloudflare, despliega <strong>Storage & Databases</strong> y haz clic en <strong>KV</strong>.</li>
+                        <li>Haz clic en el botón azul <strong>Create a namespace</strong> (o <em>Create</em>).</li>
+                        <li>En <em>Namespace Name</em> escribe en mayúsculas: <code class="bg-navy-800 text-emerald-400 px-2 py-0.5 rounded font-bold">CONTACTOS</code> y presiona <strong>Add</strong>.</li>
+                    </ol>
+                </div>
+
+                <!-- Subpaso 5.2: Crear el Worker -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-orange-400 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500 text-xs flex items-center justify-center">B</span>
+                        Crear el Worker (Tu API Serverless)
+                    </h3>
+                    <ol class="list-decimal list-inside text-xs md:text-sm text-gray-300 space-y-2 bg-navy-900/60 p-4 rounded-xl border border-navy-700 mb-4">
+                        <li>En el menú izquierdo, regresa a <strong>Workers & Pages</strong> y haz clic en el botón azul <strong>Create</strong>.</li>
+                        <li>En la pestaña <strong>Workers</strong>, haz clic en <strong>Create Worker</strong> (o <em>Start with Hello World!</em>).</li>
+                        <li>Puedes dejar el nombre que te sugiere o llamarlo <code>api-contactos</code> y dar clic en <strong>Deploy</strong>.</li>
+                        <li>Una vez desplegado, haz clic en el botón <strong>Edit code</strong> (arriba a la derecha).</li>
+                        <li><strong>Borra todo el código</strong> que aparece en <code>worker.js</code>, pega el siguiente código y da clic en <strong>Deploy</strong> (arriba a la derecha):</li>
+                    </ol>
+
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode('code-worker', this)"><i class="fa-regular fa-copy mr-1"></i> Copiar Worker JS</button>
+                        <div class="text-xs text-gray-500 mb-2 font-mono">// Archivo en Cloudflare: worker.js</div>
+<pre id="code-worker"><code>export default {
+  async fetch(request, env) {
+    // Si el formulario envía datos por método POST
+    if (request.method === "POST") {
+      const formData = await request.formData();
+      const data = Object.fromEntries(formData);
+      
+      // Guardar en la Base de Datos KV usando la fecha/hora actual como llave única
+      await env.CONTACTOS.put(Date.now().toString(), JSON.stringify(data));
+      
+      return new Response("¡Guardado en el Edge exitosamente! 🚀", {
+        headers: { 
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      });
+    }
+    return new Response("API Serverless Activa. Envíame un POST desde tu formulario.");
+  }
+};</code></pre>
+                    </div>
+                </div>
+
+                <!-- Subpaso 5.3: El Binding (CRÍTICO) -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-purple-400 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-purple-500/20 border border-purple-500 text-xs flex items-center justify-center">C</span>
+                        Vincular el Worker con la Base de Datos (KV Binding)
+                    </h3>
+                    <div class="bg-red-500/10 border border-red-500/40 rounded-xl p-4 mb-4 text-xs md:text-sm text-red-200">
+                        <i class="fa-solid fa-circle-exclamation text-red-400 mr-1.5"></i>
+                        <strong>¡PASO CRÍTICO!</strong> Si omites este paso, tu Worker no tendrá permiso para escribir en la base de datos y arrojará un <code>Error 1101 / Error 500</code>.
+                    </div>
+                    <ol class="list-decimal list-inside text-xs md:text-sm text-gray-300 space-y-2 bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <li>Sal del editor de código regresando al panel de tu Worker (flecha superior izquierda).</li>
+                        <li>Entra a la pestaña <strong>Settings</strong> de tu Worker y busca la sección <strong>Bindings</strong> (o <em>Variables and Secrets</em>).</li>
+                        <li>Haz clic en <strong>+ Add</strong> y elige <strong>KV Namespace</strong>.</li>
+                        <li>En <strong>Variable name</strong> escribe EXACTAMENTE en mayúsculas: <code class="bg-navy-800 text-emerald-400 px-2 py-0.5 rounded font-bold">CONTACTOS</code></li>
+                        <li>En <strong>KV namespace</strong> selecciona el espacio <code>CONTACTOS</code> que creaste en el inciso A y presiona <strong>Deploy / Save</strong>.</li>
+                        <li>Copia la URL pública de tu Worker (ejemplo: <code class="text-orange-400">https://api-contactos.tu-subdominio.workers.dev</code>).</li>
+                    </ol>
+                </div>
+
+                <!-- Subpaso 5.4: Actualizar HTML en GitHub -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-blue-400 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500 text-xs flex items-center justify-center">D</span>
+                        Conectar tu Página de GitHub con el Worker
+                    </h3>
+                    <p class="text-xs md:text-sm text-gray-300 mb-4">
+                        Regresa a tu repositorio <code>taller-seguridad</code> en GitHub, entra a <code>index.html</code>, haz clic en el icono del **lápiz (Edit this file)**, reemplaza todo el código por esta versión completa con formulario, **sustituye el atributo `action` con la URL de tu Worker** y haz **Commit changes**:
+                    </p>
+
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode('code-html-final', this)"><i class="fa-regular fa-copy mr-1"></i> Copiar HTML Final</button>
+                        <div class="text-xs text-gray-500 mb-2 font-mono">// Archivo en GitHub: index.html (Versión Final con Formulario conectado al Worker)</div>
+<pre id="code-html-final"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Mi Web Segura - CESBA&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: sans-serif; background: #0f172a; color: white; text-align: center; padding: 5% 1rem; margin: 0; }
+        h1 { color: #10b981; font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .container { border: 1px solid #334155; padding: 2rem; border-radius: 1rem; display: inline-block; background: #1e293b; max-width: 420px; width: 100%; box-sizing: border-box; }
+        form { display: flex; flex-direction: column; gap: 12px; margin-top: 1.5rem; text-align: left; }
+        label { font-size: 0.85rem; color: #94a3b8; font-weight: bold; }
+        input { padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; }
+        button { margin-top: 8px; padding: 12px; border: none; border-radius: 6px; background: #8b5cf6; color: white; font-weight: bold; cursor: pointer; }
+        button:hover { background: #7c3aed; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;¡Misión Cumplida! 🚀&lt;/h1&gt;
+        &lt;p&gt;Infraestructura Edge + Serverless KV.&lt;/p&gt;
+
+        &lt;!-- IMPORTANTE: Reemplaza la URL de action por la URL real de tu Worker --&gt;
+        &lt;form action="https://TU-WORKER.TU-USUARIO.workers.dev" method="POST"&gt;
+            &lt;label&gt;Nombre:&lt;/label&gt;
+            &lt;input type="text" name="nombre" placeholder="Tu nombre completo" required&gt;
+            
+            &lt;label&gt;Correo:&lt;/label&gt;
+            &lt;input type="email" name="email" placeholder="alumno@cesba.mx" required&gt;
+            
+            &lt;button type="submit"&gt;Enviar Datos Seguros al Edge&lt;/button&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </div>
+                </div>
+
+                <!-- Cómo comprobar que funcionó -->
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-6 text-xs md:text-sm text-emerald-200">
+                    <h4 class="font-bold text-emerald-400 mb-1"><i class="fa-solid fa-flask-vial mr-1.5"></i> ¿Cómo comprobar que todo funciona?</h4>
+                    <p>Espera 30 segundos tras hacer Commit en GitHub, recarga tu enlace público <code>.pages.dev</code>, llena tu nombre y correo y presiona <strong>Enviar</strong>. Verás el mensaje <em>"¡Guardado en el Edge exitosamente!"</em>. Luego ve a Cloudflare -> <strong>Storage & Databases -> KV -> CONTACTOS -> View</strong> y verás tu registro almacenado en formato JSON.</p>
+                </div>
+
+                <!-- Checkboxes de Progreso -->
+                <div class="space-y-2 border-t border-navy-700 pt-4">
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Creé el espacio KV llamado <code>CONTACTOS</code> en Cloudflare.</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Creé el Worker con el código JS y configuré el KV Binding <code>CONTACTOS</code> en Settings.</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="step-check sr-only" onchange="saveProgress()">
+                        <div class="p-3 rounded-lg border border-navy-700 bg-navy-900/40 flex items-center gap-3 transition">
+                            <i class="fa-regular fa-square-check text-emerald-400"></i>
+                            <span class="text-xs md:text-sm text-gray-200 check-title">Actualicé mi <code>index.html</code> con la URL de mi Worker y envié un registro de prueba exitoso.</span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- GLOSARIO DE BOLSILLO -->
+            <section id="glosario" class="glass-panel rounded-2xl p-6 md:p-8 border border-navy-700">
+                <h2 class="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-purple-400"></i> Glosario de Bolsillo (Conceptos que aprendiste hoy)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+                    <div class="bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <strong class="text-purple-400 block mb-1">Edge Computing (Cómputo en el Borde)</strong>
+                        <span class="text-gray-400">Ejecutar código y servir páginas desde el servidor físicamente más cercano al usuario (ej. en su misma ciudad), reduciendo la latencia a milisegundos.</span>
+                    </div>
+                    <div class="bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <strong class="text-orange-400 block mb-1">CI/CD (Integración y Despliegue Continuo)</strong>
+                        <span class="text-gray-400">Automatización que conecta tu repositorio de código (GitHub) con producción (Cloudflare) para publicar cambios automáticamente al hacer <em>Commit</em>.</span>
+                    </div>
+                    <div class="bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <strong class="text-emerald-400 block mb-1">WAF (Web Application Firewall)</strong>
+                        <span class="text-gray-400">Escudo que analiza el tráfico HTTP/HTTPS (Capa 7) para bloquear bots, inyecciones SQL y ataques DDoS antes de que lleguen a tu aplicación.</span>
+                    </div>
+                    <div class="bg-navy-900/60 p-4 rounded-xl border border-navy-700">
+                        <strong class="text-blue-400 block mb-1">Serverless + Base de Datos KV</strong>
+                        <span class="text-gray-400">Modelo donde programas funciones backend (Workers) y guardas pares Llave-Valor (KV) sin administrar ni pagar servidores encendidos las 24 horas.</span>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-navy-700 py-8 px-4 text-center text-xs text-gray-500">
+        <p class="font-semibold text-gray-400">Jornada Tecnológica CESBA 2026 • Ingeniería en Sistemas Computacionales</p>
+        <p class="mt-1">Mtro. César Gabriel Terrazas Zarazúa — Infraestructura Web y Ciberseguridad Edge</p>
+    </footer>
+
+    <!-- Scripts de Interactividad -->
+    <script>
+        function copyCode(elementId, btn) {
+            const codeText = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+                btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-500');
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-500');
+                }, 2000);
+            });
+        }
+
+        const checkboxes = document.querySelectorAll('.step-check');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+
+        function updateProgressUI() {
+            const total = checkboxes.length;
+            let checkedCount = 0;
+            checkboxes.forEach(cb => { if (cb.checked) checkedCount++; });
+            const percentage = Math.round((checkedCount / total) * 100);
+            progressBar.style.width = percentage + '%';
+            progressText.innerText = `${checkedCount}/${total}`;
+        }
+
+        function saveProgress() {
+            const states = Array.from(checkboxes).map(cb => cb.checked);
+            localStorage.setItem('cesba_taller_edge_2026', JSON.stringify(states));
+            updateProgressUI();
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('cesba_taller_edge_2026');
+            if (saved) {
+                const states = JSON.parse(saved);
+                checkboxes.forEach((cb, idx) => {
+                    if (states[idx]) cb.checked = true;
+                });
+            }
+            updateProgressUI();
+        }
+
+        function resetProgress() {
+            checkboxes.forEach(cb => cb.checked = false);
+            localStorage.removeItem('cesba_taller_edge_2026');
+            updateProgressUI();
+        }
+
+        window.onload = loadProgress;
+    </script>
+</body>
+</html>
