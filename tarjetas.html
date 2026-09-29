@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gafetes Cheat Sheet | Jornada Tecnológica 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: letter;
+            margin: 10mm;
+        }
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .card-container {
+            width: 85mm;
+            height: 54mm;
+            box-sizing: border-box;
+            border: 1px dashed #ccc; /* Guía de corte para la imprenta */
+            position: relative;
+            overflow: hidden;
+            page-break-inside: avoid;
+            background-color: white;
+        }
+        
+        /* Tema de la Cara Frontal (Identificación) */
+        .front-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+        }
+        .accent-bar { background-color: #ad8ad4; }
+        
+        /* Tema del Reverso (Acordeón Técnico) */
+        .back-bg {
+            background-color: #020617;
+            color: #f8fafc;
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        /* Ocultar botones al imprimir */
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; }
+            .card-container { border: 0.2px solid #e5e7eb; } 
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <div class="no-print mb-8 text-center bg-white p-6 rounded-xl shadow-sm border border-gray-200 max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold text-slate-800 mb-2">Generador de Tarjetas - T03 J26</h1>
+        <p class="text-sm text-slate-500 mb-4">Se generarán las caras frontales personalizadas y una página con los reversos para la imprenta.</p>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md">
+            🖨️ Imprimir / Guardar como PDF
+        </button>
+    </div>
+
+    <!-- Contenedor Grid para Hojas Carta (Aprox 10 tarjetas por hoja) -->
+    <div id="hoja-impresion" class="flex flex-wrap gap-2 justify-center max-w-[200mm] mx-auto">
+        <!-- Las tarjetas se inyectan por JavaScript -->
+    </div>
+
+    <script>
+        // PEGA AQUÍ LOS 22 NOMBRES DE TUS ALUMNOS INSCRITOS
+        const alumnos = [
+            "NAVA THULE YOSHI",
+            "TERRAZAS HERNANDEZ CESAR",
+            "MEJORADA MORENO MARIELA",
+            "LUNA SEBASTIAN",
+            "CAMPOS ARIADNA",
+            "AVENDAÑO JOSE R.",
+            "CARRILLO SAUL",
+            // Agrega el resto de los 22 nombres aquí...
+        ];
+
+        const contenedor = document.getElementById('hoja-impresion');
+
+        // 1. GENERAR CARAS FRONTALES (Personalizadas)
+        alumnos.forEach(nombre => {
+            const cardFront = document.createElement('div');
+            cardFront.className = 'card-container front-bg flex flex-col justify-between p-4 shadow-sm';
+            cardFront.innerHTML = `
+                <!-- Cabecera -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-[8px] tracking-widest text-slate-400 font-bold uppercase mb-1">CESBA Querétaro</div>
+                        <div class="text-[10px] font-bold text-indigo-300">Jornada Tecnológica 2026</div>
+                    </div>
+                    <div class="text-[8px] font-bold bg-white/10 px-2 py-0.5 rounded text-white border border-white/20">T03</div>
+                </div>
+
+                <!-- Título Central -->
+                <div class="my-auto">
+                    <h2 class="text-sm font-black tracking-tight text-white mb-0.5">CLOUD & EDGE ARCHITECT</h2>
+                    <p class="text-[7.5px] text-slate-300 leading-tight pr-4">Infraestructura Web y Ciberseguridad: De Cero a Producción Edge (Serverless)</p>
+                </div>
+
+                <!-- Placa Inferior Personalizada (Corregida con Fecha en vez de Salón) -->
+                <div class="border-t border-white/20 pt-2 flex justify-between items-end">
+                    <div>
+                        <div class="text-[11px] font-black text-white tracking-wide uppercase">${nombre}</div>
+                        <div class="text-[7px] text-indigo-300 font-semibold mt-0.5">10 de Octubre de 2026</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="accent-bar h-0.5 w-6 ml-auto mb-1 rounded-full"></div>
+                        <div class="text-[8px] font-bold text-white">Prof. CTZ</div>
+                    </div>
+                </div>
+            `;
+            contenedor.appendChild(cardFront);
+        });
+
+        // Forzar un salto de página para imprimir los reversos en otra hoja
+        const pageBreak = document.createElement('div');
+        pageBreak.style.width = '100%';
+        pageBreak.style.pageBreakBefore = 'always';
+        contenedor.appendChild(pageBreak);
+
+        // 2. GENERAR REVERSOS (Acordeón Técnico para todos)
+        // Generamos suficientes reversos para igualar el número de alumnos
+        alumnos.forEach(() => {
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-container back-bg p-3 shadow-sm text-[6.5px] flex flex-col justify-between';
+            cardBack.innerHTML = `
+                <!-- Bloque DNS -->
+                <div>
+                    <h3 class="text-[8px] font-bold text-indigo-400 border-b border-slate-800 pb-0.5 mb-1 uppercase tracking-wider">Registros DNS</h3>
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                        <div><span class="text-pink-500 font-bold">A</span> <span class="text-slate-400">-> IPv4</span></div>
+                        <div><span class="text-pink-500 font-bold">AAAA</span> <span class="text-slate-400">-> IPv6</span></div>
+                        <div><span class="text-pink-500 font-bold">CNAME</span> <span class="text-slate-400">-> Alias/URL</span></div>
+                        <div><span class="text-pink-500 font-bold">TXT</span> <span class="text-slate-400">-> Sec/Verif.</span></div>
+                    </div>
+                </div>
+
+                <!-- Bloque GIT -->
+                <div>
+                    <h3 class="text-[8px] font-bold text-indigo-400 border-b border-slate-800 pb-0.5 mb-1 mt-1.5 uppercase tracking-wider">Git Deploy Flow</h3>
+                    <div class="text-emerald-400 bg-slate-900/50 p-1 rounded font-mono">
+                        $ git add .<br>
+                        $ git commit -m "deploy"<br>
+                        $ git push origin main
+                    </div>
+                </div>
+
+                <!-- Bloque HTTP & WAF -->
+                <div class="flex gap-2 mt-1.5">
+                    <div class="w-1/2">
+                        <h3 class="text-[8px] font-bold text-indigo-400 border-b border-slate-800 pb-0.5 mb-1 uppercase tracking-wider">HTTP Status</h3>
+                        <div class="grid grid-cols-1 gap-y-0.5 text-[6px]">
+                            <div><span class="text-emerald-500 font-bold">200</span> <span class="text-slate-400">OK</span></div>
+                            <div><span class="text-blue-500 font-bold">301</span> <span class="text-slate-400">Redirect</span></div>
+                            <div><span class="text-amber-500 font-bold">403</span> <span class="text-slate-400">WAF Block</span></div>
+                            <div><span class="text-rose-500 font-bold">500</span> <span class="text-slate-400">Internal Err</span></div>
+                        </div>
+                    </div>
+                    <div class="w-1/2">
+                        <h3 class="text-[8px] font-bold text-indigo-400 border-b border-slate-800 pb-0.5 mb-1 uppercase tracking-wider">Edge Checklist</h3>
+                        <ul class="list-disc pl-2 text-slate-300 space-y-0.5">
+                            <li>SSL/TLS Strict</li>
+                            <li>HSTS Enforced</li>
+                            <li>Always HTTPS</li>
+                            <li>Bot Fight ON</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            contenedor.appendChild(cardBack);
+        });
+    </script>
+</body>
+</html>
